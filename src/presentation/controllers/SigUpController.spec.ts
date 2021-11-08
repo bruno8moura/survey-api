@@ -19,7 +19,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
 
     // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new MissingParamError('Missing param: name'))
+    expect(httpResponse.body).toEqual(new MissingParamError('name'))
   })
 
   test('should return 400 if no email is provided', () => {
@@ -39,6 +39,6 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
 
     // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new MissingParamError('Missing param: email'))
+    expect(httpResponse.body).toEqual(new MissingParamError('email'))
   })
 })

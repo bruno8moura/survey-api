@@ -1,6 +1,8 @@
 import { HttpResponse } from '../protocols/http'
-
-export const badRequest = ({ error }): HttpResponse => ({
+interface BadRequestParam {
+  error: Error
+}
+export const badRequest = ({ error }: BadRequestParam): HttpResponse => ({
   statusCode: 400,
   body: error
 })
