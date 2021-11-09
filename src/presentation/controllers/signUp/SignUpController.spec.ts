@@ -14,7 +14,7 @@ const makeAddAccount = (): AddAccount => {
       const fakeAccount = {
         id: 'valid_id',
         name: 'valid_name',
-        email: 'valid_email@email.com',
+        email: 'valid_email@mail.com',
         password: 'valid_password'
       }
 
@@ -258,5 +258,27 @@ describe('SignUp Controller', () => {
 
     // O 'toEqual' compara apenas os valores do objeto.
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('should return 201 if valid data is provided', () => {
+    // System Under Test - identifica quem está sendo testado.
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email@mail.com',
+        password: 'valid_password',
+        passwordConfirmation: 'valid_password'
+      }
+    }
+
+    const httpResponse = sut.execute(httpRequest)
+    expect(httpResponse.statusCode).toBe(201)
+    expect(httpResponse.body).toEqual({
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email@mail.com',
+      password: 'valid_password'
+    })
   })
 })
