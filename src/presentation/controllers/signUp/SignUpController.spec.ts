@@ -235,4 +235,28 @@ describe('SignUp Controller', () => {
       password: 'any_password'
     })
   })
+
+  test('should return 500 if AddAccount throws', () => {
+    const { sut, addAccount } = makeSut()
+    jest.spyOn(addAccount, 'add').mockImplementationOnce(() => {
+      throw new ServerError()
+    })
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+
+    const httpResponse = sut.execute(httpRequest)
+
+    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
+    expect(httpResponse.statusCode).toBe(500)
+
+    // O 'toEqual' compara apenas os valores do objeto.
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
 })
