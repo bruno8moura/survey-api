@@ -1,5 +1,6 @@
 import { InvalidParamError } from '../errors/InvalidParamError'
 import { MissingParamError } from '../errors/missing-param-error'
+import { ServerError } from '../errors/ServerError'
 import { EmailValidator } from '../protocols/EmailValidator'
 import { SignUpController } from './SignUpController'
 
@@ -145,5 +146,33 @@ describe('SignUp Controller', () => {
     sut.execute(httpRequest)
 
     expect(isValidSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  test('should return 500 if EmailValidator throws', () => {
+    class EmailValidatorStub implements EmailValidator {
+      isValid (email: string): boolean {
+        throw new Error()
+      }
+    }
+
+    const emailValidator = new EmailValidatorStub()
+    const sut = new SignUpController(emailValidator)
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+
+    const httpResponse = sut.execute(httpRequest)
+
+    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
+    expect(httpResponse.statusCode).toBe(500)
+
+    // O 'toEqual' compara apenas os valores do objeto.
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
