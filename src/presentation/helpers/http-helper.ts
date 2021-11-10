@@ -12,3 +12,8 @@ export const serverError = (): HttpResponse => ({
   statusCode: 500,
   body: new ServerError()
 })
+
+export const created = (data: any): HttpResponse => ({
+  statusCode: 201,
+  body: data
+})
