@@ -1,5 +1,5 @@
-import { ServerError } from '../errors/ServerError'
-import { HttpResponse } from '../protocols/http'
+import { ServerError } from '../errors'
+import { HttpResponse } from '../protocols'
 interface BadRequestParam {
   error: Error
 }
