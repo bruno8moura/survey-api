@@ -10,7 +10,7 @@ interface SutTypes {
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
-    add (account: AddAccountModel): AccountModel {
+    async add (account: AddAccountModel): Promise<AccountModel> {
       const fakeAccount = {
         id: 'valid_id',
         name: 'valid_name',
@@ -18,7 +18,7 @@ const makeAddAccount = (): AddAccount => {
         password: 'valid_password'
       }
 
-      return fakeAccount
+      return await Promise.resolve(fakeAccount)
     }
   }
 
@@ -48,7 +48,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SignUp Controller', () => {
-  test('should return 400 if no name is provided', () => {
+  test('should return 400 if no name is provided', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut } = makeSut()
     const httpRequest = {
@@ -59,7 +59,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -68,7 +68,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('name'))
   })
 
-  test('should return 400 if no email is provided', () => {
+  test('should return 400 if no email is provided', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut } = makeSut()
     const httpRequest = {
@@ -79,7 +79,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -88,7 +88,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('email'))
   })
 
-  test('should return 400 if no password is provided', () => {
+  test('should return 400 if no password is provided', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut } = makeSut()
     const httpRequest = {
@@ -99,7 +99,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -108,7 +108,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('password'))
   })
 
-  test('should return 400 if no passwordConfirmation is provided', () => {
+  test('should return 400 if no passwordConfirmation is provided', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut } = makeSut()
     const httpRequest = {
@@ -119,7 +119,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -128,7 +128,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('passwordConfirmation'))
   })
 
-  test('should return 400 if passwordConfirmation fails', () => {
+  test('should return 400 if passwordConfirmation fails', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut } = makeSut()
     const httpRequest = {
@@ -140,7 +140,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -149,7 +149,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
   })
 
-  test('should return 400 if invalid email is provided', () => {
+  test('should return 400 if invalid email is provided', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut, emailValidator } = makeSut()
     jest.spyOn(emailValidator, 'isValid').mockReturnValue(false)
@@ -163,7 +163,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -172,7 +172,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 
-  test('should call EmailValidator with correct email', () => {
+  test('should call EmailValidator with correct email', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut, emailValidator } = makeSut()
     const isValidSpy = jest.spyOn(emailValidator, 'isValid').mockReturnValue(false)
@@ -186,12 +186,12 @@ describe('SignUp Controller', () => {
       }
     }
 
-    sut.execute(httpRequest)
+    await sut.execute(httpRequest)
 
     expect(isValidSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 
-  test('should return 500 if EmailValidator throws', () => {
+  test('should return 500 if EmailValidator throws', async () => {
     const { sut, emailValidator } = makeSut()
     jest.spyOn(emailValidator, 'isValid').mockImplementationOnce(() => {
       throw new ServerError()
@@ -206,7 +206,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(500)
@@ -215,7 +215,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('should call AddAccount with correct values', () => {
+  test('should call AddAccount with correct values', async () => {
     const { sut, addAccount } = makeSut()
     const addSpy = jest.spyOn(addAccount, 'add')
 
@@ -228,7 +228,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    sut.execute(httpRequest)
+    await sut.execute(httpRequest)
     expect(addSpy).toHaveBeenCalledWith({
       name: 'any_name',
       email: 'any_email@mail.com',
@@ -236,10 +236,10 @@ describe('SignUp Controller', () => {
     })
   })
 
-  test('should return 500 if AddAccount throws', () => {
+  test('should return 500 if AddAccount throws', async () => {
     const { sut, addAccount } = makeSut()
-    jest.spyOn(addAccount, 'add').mockImplementationOnce(() => {
-      throw new ServerError()
+    jest.spyOn(addAccount, 'add').mockImplementationOnce(async () => {
+      return await Promise.reject(new ServerError())
     })
 
     const httpRequest = {
@@ -251,7 +251,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(500)
@@ -260,7 +260,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('should return 201 if valid data is provided', () => {
+  test('should return 201 if valid data is provided', async () => {
     // System Under Test - identifica quem está sendo testado.
     const { sut } = makeSut()
     const httpRequest = {
@@ -272,7 +272,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
     expect(httpResponse.statusCode).toBe(201)
     expect(httpResponse.body).toEqual({
       id: 'valid_id',
