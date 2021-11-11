@@ -59,7 +59,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = await await sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -79,7 +79,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = await await sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
@@ -99,7 +99,7 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = await await sut.execute(httpRequest)
+    const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
     expect(httpResponse.statusCode).toBe(400)
