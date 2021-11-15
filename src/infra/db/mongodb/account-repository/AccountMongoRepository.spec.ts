@@ -1,3 +1,4 @@
+import { AddAccountRepository } from '../../../../data/protocols'
 import { mongoHelper } from '../helpers/MongoHelper'
 import { AccountMongoRepository } from './AccountMongoRepository'
 
@@ -8,12 +9,28 @@ describe('Account Mongo Repository', () => {
     await mongoHelper.connect(process.env.MONGO_URL)
   })
 
+  beforeEach(async () => {
+    const accountCollection = mongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
+  })
+
   afterAll(async () => {
     await mongoHelper.disconnect()
   })
 
-  test('should return an account on success', async () => {
+  interface SutTypes {
+    sut: AddAccountRepository
+  }
+
+  const makeSut = (): SutTypes => {
     const sut = new AccountMongoRepository()
+    return {
+      sut
+    }
+  }
+
+  test('should return an account on success', async () => {
+    const { sut } = makeSut()
     const newAccount = {
       name: 'any_name',
       email: 'any_email@mail.com',
