@@ -1,5 +1,8 @@
-import { Collection, MongoClient } from 'mongodb'
-
+import { Collection, MongoClient, ObjectId } from 'mongodb'
+interface MapperProps {
+  objectId: ObjectId
+  data: any
+}
 class MongoHelper {
   private client: MongoClient
 
@@ -13,6 +16,13 @@ class MongoHelper {
 
   getCollection (name: string): Collection {
     return this.client.db().collection(name)
+  }
+
+  modelMap ({ objectId, data }: MapperProps): any {
+    return {
+      id: objectId.id.toString('hex'),
+      ...data
+    }
   }
 }
 
