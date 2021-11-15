@@ -1,6 +1,6 @@
-import { MongoClient } from 'mongodb'
+import { Collection, MongoClient } from 'mongodb'
 
-export class MongoHelper {
+class MongoHelper {
   private client: MongoClient
 
   async connect (uri: string): Promise<void> {
@@ -10,4 +10,12 @@ export class MongoHelper {
   async disconnect (): Promise<void> {
     await this.client.close()
   }
+
+  getCollection (name: string): Collection {
+    return this.client.db().collection(name)
+  }
 }
+
+const mongoHelper = new MongoHelper()
+
+export { mongoHelper }
