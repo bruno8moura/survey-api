@@ -16,7 +16,7 @@ describe('SignUp routes', () => {
   afterAll(async () => {
     await mongoHelper.disconnect()
   })
-  test('', async () => {
+  test('should return 201 when create a new account', async () => {
     await request(app)
       .post('/api/signup')
       .send({
@@ -25,6 +25,6 @@ describe('SignUp routes', () => {
         password: 'any_password',
         passwordConfirmation: 'any_password'
       })
-      .expect(200)
+      .expect(201)
   })
 })
