@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "sucrase-node src/main/server.ts",
-    "test": "jest --passWithNoTests --runInBand",
+    "test": "jest --clearCache && jest --passWithNoTests --runInBand",
     "test:verbose": "npm test",
     "test:unit": "npm test -- --watch --silent --noStackTrace -c jest-unit-config.js",
     "test:integration": "npm test -- --watch --silent --noStackTrace -c jest-integration-config.js",
