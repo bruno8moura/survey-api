@@ -1,3 +1,3 @@
 export * from '../../../protocols'
-export * from '../../../../domain/usecases/AddAccount'
-export * from '../../../../domain/models/AccountModel'
+export * from '../../../../domain/protocols/usecases/AddAccount'
+export * from '../../../../domain/protocols/models/AccountModel'
