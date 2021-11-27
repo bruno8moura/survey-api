@@ -1,5 +1,6 @@
 import { EmailValidator, AccountModel, AddAccount, AddAccountModel } from '../../controllers/signUp/protocols'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
+import { badRequest, created, serverError } from '../../helpers/http-helper'
 import { SignUpController } from './SignUpController'
 
 interface SutTypes {
@@ -63,11 +64,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.execute(httpRequest)
 
-    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(400)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new MissingParamError('name'))
+    expect(httpResponse).toEqual(badRequest({ error: new MissingParamError('name') }))
   })
 
   test('should return 400 if no email is provided', async () => {
@@ -83,11 +80,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.execute(httpRequest)
 
-    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(400)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new MissingParamError('email'))
+    expect(httpResponse).toEqual(badRequest({ error: new MissingParamError('email') }))
   })
 
   test('should return 400 if no password is provided', async () => {
@@ -103,11 +96,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.execute(httpRequest)
 
-    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(400)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new MissingParamError('password'))
+    expect(httpResponse).toEqual(badRequest({ error: new MissingParamError('password') }))
   })
 
   test('should return 400 if no passwordConfirmation is provided', async () => {
@@ -123,11 +112,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.execute(httpRequest)
 
-    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(400)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new MissingParamError('passwordConfirmation'))
+    expect(httpResponse).toEqual(badRequest({ error: new MissingParamError('passwordConfirmation') }))
   })
 
   test('should return 400 if passwordConfirmation fails', async () => {
@@ -144,11 +129,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.execute(httpRequest)
 
-    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(400)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
+    expect(httpResponse).toEqual(badRequest({ error: new InvalidParamError('passwordConfirmation') }))
   })
 
   test('should return 400 if invalid email is provided', async () => {
@@ -168,10 +149,7 @@ describe('SignUp Controller', () => {
     const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(400)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
+    expect(httpResponse).toEqual(badRequest({ error: new InvalidParamError('email') }))
   })
 
   test('should call EmailValidator with correct email', async () => {
@@ -211,10 +189,7 @@ describe('SignUp Controller', () => {
     const httpResponse = await sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(500)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new ServerError(error))
+    expect(httpResponse).toEqual(serverError(new ServerError(error)))
   })
 
   test('should call AddAccount with correct values', async () => {
@@ -255,11 +230,7 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.execute(httpRequest)
 
-    // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse.statusCode).toBe(500)
-
-    // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new ServerError(error))
+    expect(httpResponse).toEqual(serverError(new ServerError(error)))
   })
 
   test('should return 201 if valid data is provided', async () => {
@@ -275,12 +246,11 @@ describe('SignUp Controller', () => {
     }
 
     const httpResponse = await sut.execute(httpRequest)
-    expect(httpResponse.statusCode).toBe(201)
-    expect(httpResponse.body).toEqual({
+    expect(httpResponse).toEqual(created({
       id: 'valid_id',
       name: 'valid_name',
       email: 'valid_email@mail.com',
       password: 'valid_password'
-    })
+    }))
   })
 })
