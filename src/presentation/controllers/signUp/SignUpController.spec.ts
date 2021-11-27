@@ -6,6 +6,7 @@ interface SutTypes {
   sut: SignUpController
   emailValidator: EmailValidator
   addAccount: AddAccount
+  error: Error
 }
 
 const makeAddAccount = (): AddAccount => {
@@ -43,7 +44,8 @@ const makeSut = (): SutTypes => {
   return {
     sut,
     emailValidator: emailValidatorStub,
-    addAccount: addAccountStub
+    addAccount: addAccountStub,
+    error: new Error('An Error!')
   }
 }
 
@@ -192,9 +194,9 @@ describe('SignUp Controller', () => {
   })
 
   test('should return 500 if EmailValidator throws', async () => {
-    const { sut, emailValidator } = makeSut()
+    const { sut, emailValidator, error } = makeSut()
     jest.spyOn(emailValidator, 'isValid').mockImplementationOnce(() => {
-      throw new ServerError()
+      throw new ServerError(error)
     })
 
     const httpRequest = {
@@ -212,7 +214,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(500)
 
     // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError(error))
   })
 
   test('should call AddAccount with correct values', async () => {
@@ -237,9 +239,9 @@ describe('SignUp Controller', () => {
   })
 
   test('should return 500 if AddAccount throws', async () => {
-    const { sut, addAccount } = makeSut()
+    const { sut, addAccount, error } = makeSut()
     jest.spyOn(addAccount, 'add').mockImplementationOnce(async () => {
-      return await Promise.reject(new ServerError())
+      return await Promise.reject(new ServerError(new Error()))
     })
 
     const httpRequest = {
@@ -257,7 +259,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(500)
 
     // O 'toEqual' compara apenas os valores do objeto.
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError(error))
   })
 
   test('should return 201 if valid data is provided', async () => {
