@@ -1,9 +1,22 @@
 import { LogControllerDecorator } from '.'
+import { LogErrorRepository } from '../../../data/protocols/LogErrorRepository'
+import { serverError } from '../../../presentation/helpers/http-helper'
 import { Controller, HttpRequest, HttpResponse } from '../../../presentation/protocols'
 
 interface SutTypes {
   sut: LogControllerDecorator
   controllerStub: Controller
+  logErrorRepositoryStub: LogErrorRepository
+}
+
+const makeLogErrorRepository = (): LogErrorRepository => {
+  class LogErrorRepositoryStub implements LogErrorRepository {
+    async logError (_: Error): Promise<void> {
+      return await Promise.resolve()
+    }
+  }
+
+  return new LogErrorRepositoryStub()
 }
 
 const makeSut = (): SutTypes => {
@@ -12,10 +25,12 @@ const makeSut = (): SutTypes => {
       return { body: { z: 9 }, statusCode: 200 }
     }
   }
-  const controllerStub = new AControllerStub()
-  const sut = new LogControllerDecorator(controllerStub)
 
-  return { sut, controllerStub }
+  const logErrorRepositoryStub = makeLogErrorRepository()
+  const controllerStub = new AControllerStub()
+  const sut = new LogControllerDecorator(controllerStub, logErrorRepositoryStub)
+
+  return { sut, controllerStub, logErrorRepositoryStub }
 }
 
 describe('Log Decorator', () => {
@@ -48,5 +63,24 @@ describe('Log Decorator', () => {
     const stubResponse = await controllerStub.execute(request)
 
     expect(sutResponse).toEqual(stubResponse)
+  })
+
+  test('should call LogErrorRepository with correct error if controller returns a server error', async () => {
+    const { sut, controllerStub, logErrorRepositoryStub } = makeSut()
+    const fakeError = new Error('A fake Error!')
+    fakeError.stack = 'any_stack'
+    const aServerError = serverError(fakeError)
+    jest.spyOn(controllerStub, 'execute').mockReturnValueOnce(Promise.resolve(aServerError))
+    const logSpy = jest.spyOn(logErrorRepositoryStub, 'logError')
+
+    const request: HttpRequest = {
+      body: {
+        a: '1'
+      }
+    }
+
+    await sut.execute(request)
+
+    expect(logSpy).toHaveBeenCalledWith(aServerError.body)
   })
 })
