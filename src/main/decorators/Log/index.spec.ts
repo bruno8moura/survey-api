@@ -34,4 +34,19 @@ describe('Log Decorator', () => {
 
     expect(executeSpy).toHaveBeenCalledWith(request)
   })
+
+  test('should return the same as encapsulated controller', async () => {
+    const { sut, controllerStub } = makeSut()
+
+    const request: HttpRequest = {
+      body: {
+        a: '1'
+      }
+    }
+
+    const sutResponse = await sut.execute(request)
+    const stubResponse = await controllerStub.execute(request)
+
+    expect(sutResponse).toEqual(stubResponse)
+  })
 })
