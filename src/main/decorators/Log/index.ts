@@ -6,6 +6,14 @@ export class LogControllerDecorator implements Controller {
   private readonly logErrorRepository: LogErrorRepository
 
   constructor (controller: Controller, logErrorRepository: LogErrorRepository) {
+    if (!logErrorRepository) {
+      throw new Error('LogErrorRepository is undefined!')
+    }
+
+    if (!controller) {
+      throw new Error('Controller is undefined!')
+    }
+
     this.logErrorRepository = logErrorRepository
     this.controller = controller
   }
