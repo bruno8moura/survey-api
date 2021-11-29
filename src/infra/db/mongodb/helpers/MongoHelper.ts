@@ -1,6 +1,5 @@
-import { Collection, MongoClient, ObjectId } from 'mongodb'
+import { Collection, MongoClient } from 'mongodb'
 interface MapperProps {
-  objectId: ObjectId
   data: any
 }
 
@@ -26,11 +25,12 @@ class MongoHelper {
     return this.client.db().collection(name)
   }
 
-  modelMap ({ objectId, data }: MapperProps): any {
-    delete data._id
+  modelMap ({ data }: MapperProps): any {
+    const dataClone = { ...data }
+    delete dataClone._id
     return {
-      id: objectId.id.toString('hex'),
-      ...data
+      id: data._id,
+      ...dataClone
     }
   }
 }
