@@ -27,6 +27,7 @@ class MongoHelper {
   }
 
   modelMap ({ objectId, data }: MapperProps): any {
+    delete data._id
     return {
       id: objectId.id.toString('hex'),
       ...data
