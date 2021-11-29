@@ -30,15 +30,19 @@ const makeLogErrorRepository = (): LogErrorRepository => {
   return new LogErrorRepositoryStub()
 }
 
-const makeSut = (): SutTypes => {
+const makeControllerStub = (): Controller => {
   class AControllerStub implements Controller {
     async execute (request: HttpRequest): Promise<HttpResponse> {
       return { body: { z: 9 }, statusCode: 200 }
     }
   }
 
+  return new AControllerStub()
+}
+
+const makeSut = (): SutTypes => {
   const logErrorRepositoryStub = makeLogErrorRepository()
-  const controllerStub = new AControllerStub()
+  const controllerStub = makeControllerStub()
   const sut = new LogControllerDecorator(controllerStub, logErrorRepositoryStub)
 
   return { sut, controllerStub, logErrorRepositoryStub }
@@ -76,5 +80,24 @@ describe('Log Decorator', () => {
     await sut.execute(request)
 
     expect(logSpy).toHaveBeenCalledWith(aServerError.body)
+  })
+
+  test('should not create LogDecorator without LogErrorRepository', async () => {
+    const controllerStub = makeControllerStub()
+    let newLogControllerDecorator: LogControllerDecorator
+    try {
+      newLogControllerDecorator = new LogControllerDecorator(controllerStub, null)
+    } catch (error) {
+    }
+    expect(newLogControllerDecorator).toBeUndefined()
+  })
+
+  test('should not create LogDecorator without Controller', async () => {
+    let newLogControllerDecorator: LogControllerDecorator
+    try {
+      newLogControllerDecorator = new LogControllerDecorator(null, makeLogErrorRepository())
+    } catch (error) {
+    }
+    expect(newLogControllerDecorator).toBeUndefined()
   })
 })
