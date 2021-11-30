@@ -6,7 +6,7 @@ import { Controller, HttpRequest, HttpResponse } from '../../../presentation/pro
 const makeFakeServerError = (): HttpResponse => {
   const fakeError = new Error('A fake Error!')
   fakeError.stack = 'any_stack'
-  return serverError(fakeError)
+  return serverError({ error: fakeError })
 }
 
 const makeFakeRequest = (): HttpRequest => ({

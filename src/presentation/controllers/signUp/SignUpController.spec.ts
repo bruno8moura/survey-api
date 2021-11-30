@@ -1,6 +1,6 @@
 import { EmailValidator, AccountModel, AddAccount, AddAccountModel } from '../../controllers/signUp/protocols'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
-import { badRequest, created, serverError } from '../../helpers/http-helper'
+import { badRequest, created } from '../../helpers/http-helper'
 import { SignUpController } from './SignUpController'
 
 interface SutTypes {
@@ -186,10 +186,10 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = await sut.execute(httpRequest)
+    const promise = sut.execute(httpRequest)
 
     // O toBe compara o ponteiro dos objetos. Ou seja os objetos tem que ser identicos.
-    expect(httpResponse).toEqual(serverError(new ServerError(error)))
+    await expect(promise).rejects.toThrow()
   })
 
   test('should call AddAccount with correct values', async () => {
@@ -216,7 +216,7 @@ describe('SignUp Controller', () => {
   test('should return 500 if AddAccount throws', async () => {
     const { sut, addAccount, error } = makeSut()
     jest.spyOn(addAccount, 'add').mockImplementationOnce(async () => {
-      return await Promise.reject(new ServerError(new Error()))
+      return await Promise.reject(new ServerError(error))
     })
 
     const httpRequest = {
@@ -228,9 +228,9 @@ describe('SignUp Controller', () => {
       }
     }
 
-    const httpResponse = await sut.execute(httpRequest)
+    const promise = sut.execute(httpRequest)
 
-    expect(httpResponse).toEqual(serverError(new ServerError(error)))
+    await expect(promise).rejects.toThrow()
   })
 
   test('should return 201 if valid data is provided', async () => {
