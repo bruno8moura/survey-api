@@ -1,4 +1,6 @@
 import { LoginController } from '.'
+import { AuthToken } from '../../../domain/protocols/models/AuthToken'
+import { Authentication, AuthenticationParams } from '../../../domain/protocols/usecases/Authentication'
 import { InvalidParamError, MissingParamError } from '../../errors'
 import { badRequest, serverError } from '../../helpers/http-helper'
 import { EmailValidator, HttpRequest } from '../../protocols'
@@ -6,6 +8,7 @@ import { EmailValidator, HttpRequest } from '../../protocols'
 interface SutTypes {
   sut: LoginController
   emailValidatorStub: EmailValidator
+  authenticationStub: Authentication
 }
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -25,11 +28,22 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth (params: AuthenticationParams): Promise<AuthToken> {
+      return { accessToken: 'any_token' }
+    }
+  }
+
+  return new AuthenticationStub()
+}
+
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
-  const sut = new LoginController({ emailValidator: emailValidatorStub })
+  const authenticationStub = makeAuthentication()
+  const sut = new LoginController({ emailValidator: emailValidatorStub, authentication: authenticationStub })
 
-  return { sut, emailValidatorStub }
+  return { sut, emailValidatorStub, authenticationStub }
 }
 
 describe('Login Controller', () => {
@@ -84,5 +98,17 @@ describe('Login Controller', () => {
 
     const httpResponse = await sut.execute(httpRequest)
     expect(httpResponse).toEqual(serverError({ error: anError }))
+  })
+
+  test('should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    const httpRequest = makeFakeRequest()
+
+    await sut.execute(httpRequest)
+    const { body: { email, password } } = httpRequest
+    const authenticationParams = { email, password }
+    expect(authSpy).toHaveBeenCalledWith(authenticationParams)
   })
 })
