@@ -1,6 +1,6 @@
-import { ServerError } from '../errors'
-import { UnauthorizedError } from '../errors/UnauthorizedError'
-import { HttpResponse } from '../protocols'
+import { ServerError } from '../../errors'
+import { UnauthorizedError } from '../../errors/UnauthorizedError'
+import { HttpResponse } from '../../protocols'
 interface ErrorParam {
   error: Error
 }

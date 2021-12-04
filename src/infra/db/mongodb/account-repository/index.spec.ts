@@ -1,6 +1,6 @@
 import { AddAccountRepository } from '../../../../data/protocols'
 import { mongoHelper } from '../helpers/MongoHelper'
-import { AccountMongoRepository } from './AccountMongoRepository'
+import { AccountMongoRepository } from '.'
 
 jest.setTimeout(30000)
 describe('Account Mongo Repository', () => {

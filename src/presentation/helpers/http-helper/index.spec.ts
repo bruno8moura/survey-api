@@ -1,4 +1,4 @@
-import { badRequest, created, serverError, unauthorized, ok } from './http-helper'
+import { badRequest, created, serverError, unauthorized, ok } from '.'
 describe('Http Helper', () => {
   test('should return a patterned http response payload when 400 http code happens', () => {
     const error = new Error('An error!')
