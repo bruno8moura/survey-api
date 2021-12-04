@@ -1,4 +1,4 @@
-import { badRequest, created, serverError } from './http-helper'
+import { badRequest, created, serverError, unauthorized } from './http-helper'
 describe('Http Helper', () => {
   test('should return a patterned http response payload when 400 http code happens', () => {
     const error = new Error('An error!')
@@ -26,5 +26,13 @@ describe('Http Helper', () => {
     expect(payload.statusCode).toBeDefined()
     expect(payload.statusCode).toBe(201)
     expect(payload.body).toBeDefined()
+  })
+
+  test('should return a patterned http response payload when 401 http code happens', () => {
+    const payload = unauthorized()
+
+    expect(payload.statusCode).toBeDefined()
+    expect(payload.statusCode).toBe(401)
+    expect(payload.body).toBeInstanceOf(Error)
   })
 })
