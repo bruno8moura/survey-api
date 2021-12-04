@@ -1,3 +1,3 @@
 export interface AuthToken {
-  accessToken: string
+  accessToken: string | undefined
 }

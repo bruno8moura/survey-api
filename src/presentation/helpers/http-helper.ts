@@ -1,4 +1,5 @@
 import { ServerError } from '../errors'
+import { UnauthorizedError } from '../errors/UnauthorizedError'
 import { HttpResponse } from '../protocols'
 interface ErrorParam {
   error: Error
@@ -18,4 +19,9 @@ export const serverError = ({ error }: ErrorParam): HttpResponse => {
 export const created = (data: any): HttpResponse => ({
   statusCode: 201,
   body: data
+})
+
+export const unauthorized = (): HttpResponse => ({
+  statusCode: 401,
+  body: new UnauthorizedError()
 })
