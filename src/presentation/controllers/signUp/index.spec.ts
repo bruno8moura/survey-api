@@ -1,5 +1,5 @@
 import { EmailValidator, AccountModel, AddAccount, AddAccountModel, HttpRequest, Validation } from './protocols'
-import { InvalidParamError, ServerError } from '../../errors'
+import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
 import { badRequest, created } from '../../helpers/http-helper'
 import { SignUpController } from '.'
 
@@ -185,5 +185,19 @@ describe('SignUp Controller', () => {
     await sut.execute(httpRequest)
 
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('should return 400 if Validation returns an error', async () => {
+    // System Under Test - identifica quem está sendo testado.
+    const { sut, validation } = makeSut()
+    const error = new MissingParamError('any_field')
+    jest.spyOn(validation, 'validate').mockReturnValueOnce(error)
+
+    const httpRequest = makeHttpRequest()
+    httpRequest.body.email = 'any_email'
+
+    const httpResponse = await sut.execute(httpRequest)
+
+    expect(httpResponse).toEqual(badRequest({ error }))
   })
 })
