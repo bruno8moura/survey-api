@@ -19,16 +19,13 @@ export class SignUpController implements Controller {
         return badRequest({ error })
       }
 
-      const { body: { name, password, passwordConfirmation, email } } = httpRequest
-      if (password !== passwordConfirmation) {
-        return badRequest({ error: new InvalidParamError('passwordConfirmation') })
-      }
-
+      const { body: { email } } = httpRequest
       const isValidEmail = this.emailValidator.isValid(email)
       if (!isValidEmail) {
         return badRequest({ error: new InvalidParamError('email') })
       }
 
+      const { body: { name, password } } = httpRequest
       const account = await this.addAccount.add({ name, email, password })
 
       return created(account)
