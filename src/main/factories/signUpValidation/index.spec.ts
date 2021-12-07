@@ -1,5 +1,5 @@
 import { makeSignUpValidation } from '.'
-import { CompareFieldValidations } from '../../../presentation/helpers/validators/CompareFieldsValidation'
+import { CompareFieldValidation } from '../../../presentation/helpers/validators/CompareFieldsValidation'
 import { EmailValidation } from '../../../presentation/helpers/validators/EmailValidation'
 import { RequiredFieldValidation } from '../../../presentation/helpers/validators/RequiredFieldValidation'
 import { ValidationComposite } from '../../../presentation/helpers/validators/ValidationComposite'
@@ -27,7 +27,7 @@ describe('SignUp validation factory', () => {
       validations.push(new RequiredFieldValidation(field))
     }
     const [email, password, passwordConfirmation] = fields
-    validations.push(new CompareFieldValidations(password, passwordConfirmation))
+    validations.push(new CompareFieldValidation(password, passwordConfirmation))
     validations.push(new EmailValidation(email, makeEmailValidator()))
 
     expect(ValidationComposite).toHaveBeenCalledWith(validations)
