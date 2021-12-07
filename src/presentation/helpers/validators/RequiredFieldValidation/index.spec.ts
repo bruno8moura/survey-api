@@ -4,25 +4,33 @@ import { Validation } from '../Validation'
 
 interface SutTypes {
   sut: Validation
-  anyField: string
+  sutObj: any
 }
 
 const makeSut = (): SutTypes => {
+  const sutObj = { any_field: 'any_value' }
   const anyField = 'any_field'
   const sut = new RequiredFieldValidation(anyField)
 
   return {
     sut,
-    anyField
+    sutObj
   }
 }
 
 describe('Required Field Validation', () => {
   test('should return a MissingParamError if validation fails', () => {
-    const { sut, anyField } = makeSut()
+    const { sut, sutObj } = makeSut()
 
     const error = sut.validate({ name: 'any_name' })
 
-    expect(error).toEqual(new MissingParamError(anyField))
+    expect(error).toEqual(new MissingParamError(Object.keys(sutObj)[0]))
+  })
+
+  test('should not return if validation succeeds', () => {
+    const { sut, sutObj } = makeSut()
+
+    const error = sut.validate(sutObj)
+    expect(error).toBeFalsy()
   })
 })
