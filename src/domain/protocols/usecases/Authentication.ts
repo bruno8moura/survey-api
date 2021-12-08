@@ -1,9 +1,9 @@
 import { AuthToken } from '../models/AuthToken'
-export interface AuthenticationParams {
+export interface AuthenticationModel {
   email: string
   password: string
 }
 
 export interface Authentication {
-  auth: (params: AuthenticationParams) => Promise<AuthToken>
+  auth: (params: AuthenticationModel) => Promise<AuthToken>
 }
