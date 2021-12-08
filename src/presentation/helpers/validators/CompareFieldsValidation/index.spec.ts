@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { CompareFieldValidation } from '.'
 import { InvalidParamError } from '../../../errors'
-import { Validation } from '../Validation'
+import { Validation } from '../../../protocols/Validation'
 
 interface SutTypes {
   sut: Validation
